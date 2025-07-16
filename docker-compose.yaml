@@ -7,6 +7,11 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGPORT: ${DB_PORT}
     volumes:
       - /home/ubuntu/Dataspace/postgres:/var/lib/postgresql/data
     ports:
