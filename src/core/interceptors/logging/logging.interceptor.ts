@@ -12,7 +12,7 @@ import { WinstonLoggerService } from './winston-logger.service';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(private readonly logger: WinstonLoggerService) { }
+  constructor(private readonly logger: WinstonLoggerService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>();
