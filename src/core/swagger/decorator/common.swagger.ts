@@ -17,7 +17,7 @@ export class ApiResponseDto<T> {
     description: '응답 데이터',
     example: {},
   })
-  data: T;
+  data?: T;
 }
 
 export function createValidationErrorResponse(): ApiResponseOptions {

@@ -33,6 +33,7 @@ export class AuthService {
       // JWT 토큰 생성
       const token = await this.jwtUtil.generateToken({
         uId: newUser.uId,
+        uName: newUser.uName,
         uEmail: newUser.uEmail,
         uRole: newUser.uRole,
       });
@@ -77,6 +78,7 @@ export class AuthService {
       // JWT 토큰 생성
       const token = await this.jwtUtil.generateToken({
         uId: user.uId,
+        uName: user.uName,
         uEmail: user.uEmail,
         uRole: user.uRole,
       });
@@ -87,6 +89,16 @@ export class AuthService {
       return token;
     } catch (error) {
       this.logger.error('AuthService.login Failed.');
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  async logout(userId: string) {
+    try {
+      await this.userQuery.updateUserRefreshToken(userId, '');
+    } catch (error) {
+      this.logger.error('AuthService.logout Failed.');
       this.logger.error(error);
       throw error;
     }
