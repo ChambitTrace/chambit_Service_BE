@@ -15,6 +15,8 @@ export const ErrorCode = {
   DUPLICATION: -5,
   /** 수정 불가 오류 */
   NOT_UPDATE: -6,
+  /** 사용자 없음 */
+  USER_NOT_FOUND: -7,
 
   /** JWT 인증 관련 오류 코드 */
   /** 인증 실패 */

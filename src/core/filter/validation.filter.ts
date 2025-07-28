@@ -41,7 +41,16 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     }
 
     // 형식 오류 (matches, length, isString 등)
-    const formatKeys = ['matches', 'length', 'isString', 'isNumber', 'isIn'];
+    const formatKeys = [
+      'matches',
+      'length',
+      'isString',
+      'isBoolean',
+      'isNumber',
+      'isIn',
+      'isObject',
+      'isEmail',
+    ];
     if (constraintKeys.some((key) => formatKeys.includes(key))) {
       return ErrorCode.NOT_VALIDITY;
     }
