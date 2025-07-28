@@ -24,7 +24,6 @@ export class User {
   @Column({
     name: 'u_refresh_token',
     type: 'varchar',
-    length: 255,
     nullable: true,
   })
   uRefreshToken: string;
