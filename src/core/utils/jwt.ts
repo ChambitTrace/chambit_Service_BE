@@ -29,7 +29,7 @@ export class JwtUtil {
     const accessToken = await this.generateAccessToken(payload);
     const refreshToken = await this.generateRefreshToken(payload);
 
-    return { accessToken, refreshToken };
+    return { accessToken: `Bearer ${accessToken}`, refreshToken };
   }
 
   private async generateAccessToken(payload: JwtPayload): Promise<string> {

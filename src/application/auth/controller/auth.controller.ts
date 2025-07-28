@@ -6,7 +6,7 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CustomValidationPipe } from 'src/core/pipes/validation';
 import { JsonResponse } from 'src/core/utils/json-response';
 import { AuthService } from '../service/auth.service';
@@ -54,6 +54,14 @@ export class AuthController {
   @Get('logout')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: '로그아웃' })
+  @ApiHeader({
+    name: 'authorization',
+    description: 'Bearer 액세스 토큰',
+  })
+  @ApiHeader({
+		name: 'cookie',
+		description: '리프레시 토큰이 포함된 쿠키',
+  })
   @LogoutSwagger()
   async logout(@User() user: UserInfo) {
     await this.authService.logout(user.uId);
@@ -65,6 +73,14 @@ export class AuthController {
   @Get('user')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: '유저 정보 조회' })
+  @ApiHeader({
+    name: 'authorization',
+    description: 'Bearer 액세스 토큰',
+  })
+  @ApiHeader({
+		name: 'cookie',
+		description: '리프레시 토큰이 포함된 쿠키',
+  })
   @GetUserInfoSwagger()
   async getUserInfo(@User() user: UserInfo) {
     const response = new JsonResponse();

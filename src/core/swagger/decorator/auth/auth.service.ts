@@ -10,21 +10,49 @@ import {
 } from '../common.swagger';
 
 export class TokenDto {
+  @ApiProperty({
+    description: '액세스 토큰',
+    type: String,
+  })
   accessToken: string;
+
+  @ApiProperty({
+    description: '리프레시 토큰',
+    type: String,
+  })
   refreshToken: string;
 }
 
 export class UserInfoDto {
+  @ApiProperty({
+    description: '유저 ID',
+    type: String,
+  })
   uId: string;
+
+  @ApiProperty({
+    description: '유저 이름',
+    type: String,
+  })
   uName: string;
+
+  @ApiProperty({
+    description: '유저 이메일',
+    type: String,
+  })
   uEmail: string;
+
+  @ApiProperty({
+    description: '유저 역할',
+    type: String,
+  })
   uRole: string;
 }
 
 export class SignUpResponseDto extends ApiResponseDto<TokenDto> {
   @ApiProperty({
     description: '토큰 정보',
-    type: Object,
+    type: TokenDto,
   })
   declare data: TokenDto;
 }
@@ -32,7 +60,7 @@ export class SignUpResponseDto extends ApiResponseDto<TokenDto> {
 export class LoginResponseDto extends ApiResponseDto<TokenDto> {
   @ApiProperty({
     description: '토큰 정보',
-    type: Object,
+    type: TokenDto,
   })
   declare data: TokenDto;
 }
@@ -42,7 +70,7 @@ export class LogoutResponseDto extends ApiResponseDto<void> {}
 export class GetUserInfoResponseDto extends ApiResponseDto<UserInfoDto> {
   @ApiProperty({
     description: '유저 정보',
-    type: Object,
+    type: UserInfoDto,
   })
   declare data: UserInfoDto;
 }
