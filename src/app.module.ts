@@ -5,6 +5,8 @@ import { LoggingModule } from './core/interceptors/logging/logging.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './application/auth/auth.module';
+import { DBModule } from './application/DB/DB.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { AppService } from './app.service';
       synchronize: true, // 개발환경에서만 true
     }),
     LoggingModule,
+    DBModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -78,6 +78,8 @@ export class CustomValidationPipe implements PipeTransform {
           'isBoolean',
           'isArray',
           'isObject',
+          'isEmail',
+          'isIn',
           'min',
           'max',
         ].includes(key),
