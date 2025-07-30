@@ -20,7 +20,8 @@ export class JwtUtil {
     private readonly logger: WinstonLoggerService,
     private readonly jwtService: JwtService,
     private readonly userQuery: UserQuery,
-    @Inject(jwtConfig.KEY) private readonly config: ConfigType<typeof jwtConfig>,
+    @Inject(jwtConfig.KEY)
+    private readonly config: ConfigType<typeof jwtConfig>,
   ) {}
 
   async generateToken(
@@ -181,7 +182,9 @@ export class JwtUtil {
       );
     }
 
-    const refreshToken = cookie.split('; ').find((cookie: string) => cookie.startsWith('refreshToken='));
+    const refreshToken = cookie
+      .split('; ')
+      .find((cookie: string) => cookie.startsWith('refreshToken='));
     const [rType, rValue] = refreshToken.split('=');
 
     if (!refreshToken || rType !== 'refreshToken') {

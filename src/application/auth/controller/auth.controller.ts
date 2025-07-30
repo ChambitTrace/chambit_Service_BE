@@ -59,8 +59,8 @@ export class AuthController {
     description: 'Bearer 액세스 토큰',
   })
   @ApiHeader({
-		name: 'cookie',
-		description: '리프레시 토큰이 포함된 쿠키',
+    name: 'cookie',
+    description: '리프레시 토큰이 포함된 쿠키',
   })
   @LogoutSwagger()
   async logout(@User() user: UserInfo) {
@@ -78,8 +78,8 @@ export class AuthController {
     description: 'Bearer 액세스 토큰',
   })
   @ApiHeader({
-		name: 'cookie',
-		description: '리프레시 토큰이 포함된 쿠키',
+    name: 'cookie',
+    description: '리프레시 토큰이 포함된 쿠키',
   })
   @GetUserInfoSwagger()
   async getUserInfo(@User() user: UserInfo) {
