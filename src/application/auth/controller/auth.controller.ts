@@ -110,9 +110,11 @@ export class AuthController {
     description: 'Google OAuth 로그인 성공 후 리다이렉트 되는 콜백, JWT 토큰 발급'
   })
   async googleCallback(@User() user: OAuthUser) {
+    const result = await this.authService.oauthLogin(user);
+
     const response = new JsonResponse();
-    response.set('data', user);
-    
+    response.set('data', result);
+
     return response.of();
   }
 }
