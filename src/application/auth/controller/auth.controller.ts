@@ -4,7 +4,7 @@ import {
   Get,
   Post,
   UseGuards,
-  UsePipes,
+  UsePipes
 } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CustomValidationPipe } from 'src/core/pipes/validation';
@@ -18,7 +18,9 @@ import {
   GetUserInfoSwagger,
 } from 'src/core/swagger/decorator/auth/auth.service';
 import { AuthGuard } from 'src/core/guard/auth.guard';
-import { User, UserInfo } from 'src/core/guard/decorator/user.decorator';
+import { User, UserInfo, OAuthUser  } from 'src/core/guard/decorator/user.decorator';
+import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
+
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -86,6 +88,31 @@ export class AuthController {
     const response = new JsonResponse();
     response.set('data', user);
 
+    return response.of();
+  }
+  
+
+  @Get('google')
+  @UseGuards(PassportAuthGuard('google'))
+  @ApiOperation({
+    summary: '구글 로그인 페이지로 이동',
+    description: 'Google OAuth2 로그인 페이지로 리디렉션합니다.',
+  })
+  googleAuth() {
+    // Google OAuth 리디렉션
+    return;
+  }
+
+  @Get('google/callback')
+  @UseGuards(PassportAuthGuard('google'))
+  @ApiOperation({ 
+    summary: '구글 로그인 콜백', 
+    description: 'Google OAuth 로그인 성공 후 리다이렉트 되는 콜백, JWT 토큰 발급'
+  })
+  async googleCallback(@User() user: OAuthUser) {
+    const response = new JsonResponse();
+    response.set('data', user);
+    
     return response.of();
   }
 }

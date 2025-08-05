@@ -4,6 +4,7 @@ import { UserQuery } from 'src/application/DB/query/user.query';
 import { ErrorCode } from 'src/core/exception/const/error-code';
 import { GlobalException } from 'src/core/exception/global.exception';
 import { JwtUtil } from 'src/core/utils/jwt';
+import { OAuthUser as UserOauth } from 'src/core/guard/decorator/user.decorator';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -99,6 +100,35 @@ export class AuthService {
       await this.userQuery.updateUserRefreshToken(userId, '');
     } catch (error) {
       this.logger.error('AuthService.logout Failed.');
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  async oauthLogin(googleUser: UserOauth) {
+    try {
+      let user = await this.userQuery.findUserByEmail(googleUser.email);
+      if (!user) {
+        this.logger.error(`User not found: ${googleUser.email}`);
+        throw new GlobalException(
+          'User not found',
+          404,
+          ErrorCode.USER_NOT_FOUND,
+        );
+      }
+
+      const token = await this.jwtUtil.generateToken({
+        uId: user.uId,
+        uName: user.uName,
+        uEmail: user.uEmail,
+        uRole: user.uRole,
+      });
+
+      await this.userQuery.updateUserRefreshToken(user.uId, token.refreshToken);
+      this.logger.debug(`AuthService.oauthLogin success: ${googleUser.email}`);
+      return token;
+    } catch (error) {
+      this.logger.error('AuthService.oauthLogin Failed.');
       this.logger.error(error);
       throw error;
     }

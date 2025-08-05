@@ -7,6 +7,13 @@ export interface UserInfo {
   uRole: string;
 }
 
+export interface OAuthUser {
+  email: string;
+  name: string;
+  picture: string;
+  accessToken: string;
+}
+
 export const User = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): UserInfo => {
     const request = ctx.switchToHttp().getRequest();

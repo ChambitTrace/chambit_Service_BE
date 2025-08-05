@@ -7,10 +7,11 @@ import jwtConfig from '../../config/jwt.config';
 import { AuthController } from './controller/auth.controller';
 import { AuthService } from './service/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { GoogleStrategy } from "./strategy/google.strategy";
 
 @Module({
   imports: [DBModule, ConfigModule.forFeature(jwtConfig)],
   controllers: [AuthController],
-  providers: [WinstonLoggerService, AuthService, JwtService, JwtUtil],
+  providers: [WinstonLoggerService, AuthService, JwtService, JwtUtil, GoogleStrategy],
 })
 export class AuthModule {}
