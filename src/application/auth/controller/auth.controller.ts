@@ -4,7 +4,7 @@ import {
   Get,
   Post,
   UseGuards,
-  UsePipes
+  UsePipes,
 } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CustomValidationPipe } from 'src/core/pipes/validation';
@@ -18,9 +18,13 @@ import {
   GetUserInfoSwagger,
 } from 'src/core/swagger/decorator/auth/auth.service';
 import { AuthGuard } from 'src/core/guard/auth.guard';
-import { User, UserInfo, OAuthUser  } from 'src/core/guard/decorator/user.decorator';
+import {
+  User,
+  OAuthUser,
+  UserInfo,
+  OAuthUserInfo,
+} from 'src/core/guard/decorator/user.decorator';
 import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
-
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -90,7 +94,6 @@ export class AuthController {
 
     return response.of();
   }
-  
 
   @Get('google')
   @UseGuards(PassportAuthGuard('google'))
@@ -105,11 +108,12 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(PassportAuthGuard('google'))
-  @ApiOperation({ 
-    summary: '구글 로그인 콜백', 
-    description: 'Google OAuth 로그인 성공 후 리다이렉트 되는 콜백, JWT 토큰 발급'
+  @ApiOperation({
+    summary: '구글 로그인 콜백',
+    description:
+      'Google OAuth 로그인 성공 후 리다이렉트 되는 콜백, JWT 토큰 발급',
   })
-  async googleCallback(@User() user: OAuthUser) {
+  async googleCallback(@OAuthUser() user: OAuthUserInfo) {
     const result = await this.authService.oauthLogin(user);
 
     const response = new JsonResponse();

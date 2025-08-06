@@ -4,7 +4,7 @@ import { UserQuery } from 'src/application/DB/query/user.query';
 import { ErrorCode } from 'src/core/exception/const/error-code';
 import { GlobalException } from 'src/core/exception/global.exception';
 import { JwtUtil } from 'src/core/utils/jwt';
-import { OAuthUser as UserOauth } from 'src/core/guard/decorator/user.decorator';
+import { OAuthUserInfo} from 'src/core/guard/decorator/user.decorator';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -105,7 +105,7 @@ export class AuthService {
     }
   }
 
-  async oauthLogin(googleUser: UserOauth) {
+  async oauthLogin(googleUser: OAuthUserInfo) {
     try {
       let user = await this.userQuery.findUserByEmail(googleUser.email);
       if (!user) {
