@@ -13,7 +13,7 @@ export class UserQuery {
     private readonly logger: WinstonLoggerService,
   ) {}
 
-  async createUser(email: string, password: string) {
+  async createUser(email: string, password: string | undefined) {
     try {
       const user = this.userRepository.create({
         uEmail: email,

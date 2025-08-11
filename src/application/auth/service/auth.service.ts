@@ -108,13 +108,12 @@ export class AuthService {
   async oauthLogin(googleUser: OAuthUserInfo) {
     try {
       let user = await this.userQuery.findUserByEmail(googleUser.email);
+
       if (!user) {
-        this.logger.error(`User not found: ${googleUser.email}`);
-        throw new GlobalException(
-          'User not found',
-          404,
-          ErrorCode.USER_NOT_FOUND,
+        this.logger.debug(
+          `User not found, creating new user: ${googleUser.email}`,
         );
+        user = await this.userQuery.createUser(googleUser.email, undefined);
       }
 
       const token = await this.jwtUtil.generateToken({
