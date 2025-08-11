@@ -3,7 +3,11 @@
 // src/application/auth/strategy/google.strategy.ts
 import { Injectable, Inject } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback, StrategyOptions } from 'passport-google-oauth20';
+import {
+  Strategy,
+  VerifyCallback,
+  StrategyOptions,
+} from 'passport-google-oauth20';
 import { ConfigType } from '@nestjs/config';
 import googleConfig from '../../../config/oauth.config';
 

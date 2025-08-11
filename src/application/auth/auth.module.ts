@@ -11,7 +11,11 @@ import { JwtService } from '@nestjs/jwt';
 import { GoogleStrategy } from './strategy/google.strategy';
 
 @Module({
-  imports: [DBModule, ConfigModule.forFeature(jwtConfig), ConfigModule.forFeature(googleConfig)],
+  imports: [
+    DBModule,
+    ConfigModule.forFeature(jwtConfig),
+    ConfigModule.forFeature(googleConfig),
+  ],
   controllers: [AuthController],
   providers: [
     WinstonLoggerService,
