@@ -17,7 +17,8 @@ export class AuthGuard implements CanActivate {
     this.logger.debug('AuthGuard: Authentication required');
 
     const request = context.switchToHttp().getRequest();
-    const { accessToken, refreshToken } = await this.jwtUtil.extractTokens(request);
+    const { accessToken, refreshToken } =
+      await this.jwtUtil.extractTokens(request);
 
     if (!accessToken || !refreshToken) {
       throw new GlobalException(
