@@ -19,7 +19,8 @@ async function bootstrap() {
     new ValidationExceptionFilter(),
   );
   app.useGlobalPipes(new CustomValidationPipe());
-
+  
+  
   // Swagger 설정
   SwaggerConfig.setup(app);
 
