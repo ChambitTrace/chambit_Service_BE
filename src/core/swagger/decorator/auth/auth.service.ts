@@ -84,10 +84,7 @@ export function LogoutSwagger() {
   return createSwaggerDecorator(
     '로그아웃',
     createSuccessResponse(200, '로그아웃 성공', LogoutResponseDto),
-    [
-      createUnauthorizedErrorResponse(),
-      createServerErrorResponse(),
-    ],
+    [createUnauthorizedErrorResponse(), createServerErrorResponse()],
   );
 }
 
@@ -100,9 +97,6 @@ export function GetUserInfoSwagger() {
       uEmail: 'john.doe@example.com',
       uRole: 'user',
     }),
-    [
-      createUnauthorizedErrorResponse(),
-      createServerErrorResponse(),
-    ],
+    [createUnauthorizedErrorResponse(), createServerErrorResponse()],
   );
 }
