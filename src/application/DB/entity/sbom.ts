@@ -4,7 +4,11 @@ import { Pod } from './resource/pod';
 
 @Entity({ name: 't_sbom' })
 export class Sbom {
-  @PrimaryColumn({ name: 's_id', type: 'varchar', default: () => 'gen_random_uuid()' })
+  @PrimaryColumn({
+    name: 's_id',
+    type: 'varchar',
+    default: () => 'gen_random_uuid()',
+  })
   sId: string;
 
   @Column({ name: 's_coid', type: 'varchar', nullable: true })

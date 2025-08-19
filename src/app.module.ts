@@ -25,7 +25,7 @@ import { ResourceModule } from './application/resource/resource.module';
     LoggingModule,
     DBModule,
     AuthModule,
-    ResourceModule
+    ResourceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

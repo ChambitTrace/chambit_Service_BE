@@ -4,13 +4,17 @@ import { Node } from './node';
 
 @Entity({ name: 't_cluster' })
 export class Cluster {
-  @PrimaryColumn({ name: 'c_id', type: 'varchar', default: () => 'gen_random_uuid()' })
+  @PrimaryColumn({
+    name: 'c_id',
+    type: 'varchar',
+    default: () => 'gen_random_uuid()',
+  })
   cId: string;
 
-  @Column({ name: 'c_uid', type: 'varchar'})
+  @Column({ name: 'c_uid', type: 'varchar' })
   cUid: string;
 
-  @Column({ name: 'c_name', type: 'varchar'})
+  @Column({ name: 'c_name', type: 'varchar' })
   cName: string;
 
   @Column({ name: 'c_region', type: 'text', nullable: true })

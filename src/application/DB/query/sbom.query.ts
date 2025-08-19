@@ -13,11 +13,18 @@ export class SbomQuery {
     private readonly logger: WinstonLoggerService,
   ) {}
 
-  async createSbom(payload: Pick<Sbom, 'sSource' | 'sFormat' | 'sData' | 'sCoid'>) {
+  async createSbom(
+    payload: Pick<Sbom, 'sSource' | 'sFormat' | 'sData' | 'sCoid'>,
+  ) {
     try {
-      const sbom = this.repo.create({ ...payload, sGeneratedAt: getSeoulTimestamp() });
+      const sbom = this.repo.create({
+        ...payload,
+        sGeneratedAt: getSeoulTimestamp(),
+      });
       await this.repo.save(sbom);
-      this.logger.debug(`SbomQuery.createSbom success: ${payload.sSource}/${payload.sFormat}`);
+      this.logger.debug(
+        `SbomQuery.createSbom success: ${payload.sSource}/${payload.sFormat}`,
+      );
       return sbom;
     } catch (e) {
       this.logger.error('SbomQuery.createSbom Failed.');
@@ -26,6 +33,10 @@ export class SbomQuery {
     }
   }
 
-  findById(sId: string) { return this.repo.findOne({ where: { sId } }); }
-  findByContainer(coId: string) { return this.repo.find({ where: { sCoid: coId } }); }
+  findById(sId: string) {
+    return this.repo.findOne({ where: { sId } });
+  }
+  findByContainer(coId: string) {
+    return this.repo.find({ where: { sCoid: coId } });
+  }
 }

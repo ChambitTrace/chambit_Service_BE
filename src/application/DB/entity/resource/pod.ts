@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Namespace } from './namespace';
 import { Node } from './node';
 import { Sbom } from '../sbom';
@@ -6,7 +13,11 @@ import { Container } from './container';
 
 @Entity({ name: 't_pod' })
 export class Pod {
-  @PrimaryColumn({ name: 'p_id', type: 'varchar', default: () => 'gen_random_uuid()' })
+  @PrimaryColumn({
+    name: 'p_id',
+    type: 'varchar',
+    default: () => 'gen_random_uuid()',
+  })
   pId: string;
 
   @Column({ name: 'p_nid', type: 'varchar' })

@@ -1,10 +1,21 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Cluster } from './cluster';
 import { Pod } from './pod';
 
 @Entity({ name: 't_namespace' })
 export class Namespace {
-  @PrimaryColumn({ name: 'ns_id', type: 'varchar', default: () => 'gen_random_uuid()' })
+  @PrimaryColumn({
+    name: 'ns_id',
+    type: 'varchar',
+    default: () => 'gen_random_uuid()',
+  })
   nsId: string;
 
   @Column({ name: 'ns_cid', type: 'varchar' })

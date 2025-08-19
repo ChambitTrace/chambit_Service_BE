@@ -1,10 +1,21 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Pod } from './pod';
 import { Drift } from '../drift';
 
 @Entity({ name: 't_container' })
 export class Container {
-  @PrimaryColumn({ name: 'co_id', type: 'varchar', default: () => 'gen_random_uuid()' })
+  @PrimaryColumn({
+    name: 'co_id',
+    type: 'varchar',
+    default: () => 'gen_random_uuid()',
+  })
   coId: string;
 
   @Column({ name: 'co_pid', type: 'varchar' })

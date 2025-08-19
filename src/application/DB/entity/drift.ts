@@ -4,7 +4,11 @@ import { Sbom } from './sbom';
 
 @Entity({ name: 't_drift' })
 export class Drift {
-  @PrimaryColumn({ name: 'd_id', type: 'varchar', default: () => 'gen_random_uuid()' })
+  @PrimaryColumn({
+    name: 'd_id',
+    type: 'varchar',
+    default: () => 'gen_random_uuid()',
+  })
   dId: string;
 
   @Column({ name: 'd_coid', type: 'varchar' })

@@ -15,9 +15,16 @@ export class DriftQuery {
 
   async createDrift(dCoid: string, dSid: string, dDiff: Record<string, any>) {
     try {
-      const d = this.repo.create({ dCoid, dSid, dDiff, dDetectedAt: getSeoulTimestamp() });
+      const d = this.repo.create({
+        dCoid,
+        dSid,
+        dDiff,
+        dDetectedAt: getSeoulTimestamp(),
+      });
       await this.repo.save(d);
-      this.logger.debug(`DriftQuery.createDrift success: co=${dCoid} / sbom=${dSid}`);
+      this.logger.debug(
+        `DriftQuery.createDrift success: co=${dCoid} / sbom=${dSid}`,
+      );
       return d;
     } catch (e) {
       this.logger.error('DriftQuery.createDrift Failed.');
@@ -26,7 +33,13 @@ export class DriftQuery {
     }
   }
 
-  findById(dId: string) { return this.repo.findOne({ where: { dId } }); }
-  findByContainer(dCoid: string) { return this.repo.find({ where: { dCoid } }); }
-  findBySbom(dSid: string) { return this.repo.find({ where: { dSid } }); }
+  findById(dId: string) {
+    return this.repo.findOne({ where: { dId } });
+  }
+  findByContainer(dCoid: string) {
+    return this.repo.find({ where: { dCoid } });
+  }
+  findBySbom(dSid: string) {
+    return this.repo.find({ where: { dSid } });
+  }
 }

@@ -1,65 +1,136 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ResourceQuery } from '../../DB/query/resource.query';
 import { WinstonLoggerService } from 'src/core/interceptors/logging/winston-logger.service';
-import { Cluster } from '../../DB/entity/resource/cluster';
-import { Namespace } from '../../DB/entity/resource/namespace';
-import { Node } from '../../DB/entity/resource/node';
-import { Pod } from '../../DB/entity/resource/pod';
-import { Container } from '../../DB/entity/resource/container';
-import { Sbom } from '../../DB/entity/sbom';
-import { Drift } from '../../DB/entity/drift';
 
 @Injectable()
 export class ResourceService {
   constructor(
+    private readonly resourceQuery: ResourceQuery,
     private readonly logger: WinstonLoggerService,
-    @InjectRepository(Cluster) private readonly clusterRepo: Repository<Cluster>,
-    @InjectRepository(Namespace) private readonly namespaceRepo: Repository<Namespace>,
-    @InjectRepository(Node) private readonly nodeRepo: Repository<Node>,
-    @InjectRepository(Pod) private readonly podRepo: Repository<Pod>,
-    @InjectRepository(Container) private readonly containerRepo: Repository<Container>,
-    @InjectRepository(Sbom) private readonly sbomRepo: Repository<Sbom>,
-    @InjectRepository(Drift) private readonly driftRepo: Repository<Drift>,
   ) {}
 
-  /** 최상위 Cluster 목록 */
-  async getClusters() {
-    this.logger.debug('ResourceService.getClusters called');
-    return this.clusterRepo.find({ order: { cCreatedAt: 'DESC' } });
+  async checkClusterOwner(uid: string, cid: string) {
+    this.logger.debug?.('ResourceService.checkClusterOwner called');
+
+    if (!uid) {
+      this.logger.error('ResourceService.checkClusterOwner: uid is required');
+      throw new Error('uid is required');
+    }
+
+    try {
+      return await this.resourceQuery.checkClusterOwner(uid, cid);
+    } catch (error) {
+      this.logger.error('ResourceService.checkClusterOwner failed');
+      this.logger.error(error);
+      throw error;
+    }
   }
 
-  /** Cluster 기준 Node 조회 */
-  async getNodesByCluster(cid: string) {
-    this.logger.debug(`ResourceService.getNodesByCluster cid=${cid}`);
-    return this.nodeRepo.find({ where: { nCid: cid }, order: { nCreatedAt: 'DESC' } });
+  async getClusters(uid: string) {
+    this.logger.debug?.('ResourceService.getClusters called');
+
+    if (!uid) {
+      this.logger.error('ResourceService.getClusters: uid is required');
+      throw new Error('uid is required');
+    }
+
+    try {
+      return await this.resourceQuery.getClusters(uid);
+    } catch (error) {
+      this.logger.error('ResourceService.getClusters failed');
+      this.logger.error(error);
+      throw error;
+    }
   }
 
-  /** Cluster 기준 Namespace 조회 (요구 스펙상 파라미터명은 nsid이지만 실제 값은 Cluster ID) */
-  async getNamespacesByCluster(clusterId: string) {
-    this.logger.debug(`ResourceService.getNamespacesByCluster cid=${clusterId}`);
-    return this.namespaceRepo.find({ where: { nsCid: clusterId }, order: { nsCreatedAt: 'DESC' } });
+  async getNodesByCluster(cid: string, uid: string) {
+    this.logger.debug?.('ResourceService.getNodesByCluster called');
+    if (!cid) {
+      this.logger.error('ResourceService.getNodesByCluster: cid is required');
+      throw new Error('cid is required');
+    }
+    if (!uid) {
+      this.logger.error('ResourceService.getNodesByCluster: uid is required');
+      throw new Error('uid is required');
+    }
+    if (!(await this.checkClusterOwner(uid, cid))) {
+      this.logger.error(
+        'ResourceService.getNodesByCluster: User is not the owner of the cluster',
+      );
+      throw new Error('User is not the owner of the cluster');
+    }
+
+    try {
+      return await this.resourceQuery.getNodesByCluster(cid);
+    } catch (error) {
+      this.logger.error('ResourceService.getNodesByCluster failed');
+      this.logger.error(error);
+      throw error;
+    }
   }
 
-  /** Node 기준 Pod 조회 (전체 반환, 페이지네이션 없음) */
-  async getPodsByNode(nid: string) {
-    this.logger.debug(`ResourceService.getPodsByNode nid=${nid}`);
-    return this.podRepo.find({ where: { pNid: nid }, order: { pCreatedAt: 'DESC' } });
+  async getNamespacesByCluster(cid: string, uid: string) {
+    this.logger.debug?.('ResourceService.getNamespacesByCluster called');
+    if (!cid) {
+      this.logger.error('ResourceService.getNodesByCluster: cid is required');
+      throw new Error('cid is required');
+    }
+    if (!uid) {
+      this.logger.error('ResourceService.getNodesByCluster: uid is required');
+      throw new Error('uid is required');
+    }
+
+    if (!(await this.checkClusterOwner(uid, cid))) {
+      this.logger.error(
+        'ResourceService.getNodesByCluster: User is not the owner of the cluster',
+      );
+      throw new Error('User is not the owner of the cluster');
+    }
+
+    try {
+      return await this.resourceQuery.getNamespacesByCluster(cid);
+    } catch (error) {
+      this.logger.error('ResourceService.getNamespacesByCluster failed');
+      this.logger.error(error);
+      throw error;
+    }
   }
 
-  /** 전체 리소스 크기 요약 */
+  async getPodsByNode(nid: string, uid: string) {
+    this.logger.debug?.('ResourceService.getPodsByNode called');
+
+    if (!nid) {
+      this.logger.error('ResourceService.getPodsByNode: nid is required');
+      throw new Error('nid is required');
+    }
+    if (!uid) {
+      this.logger.error('ResourceService.getPodsByNode: uid is required');
+      throw new Error('uid is required');
+    }
+    if (!(await this.resourceQuery.checkNodeOwner(uid, nid))) {
+      this.logger.error(
+        'ResourceService.getPodsByNode: User is not the owner of the node',
+      );
+      throw new Error('User is not the owner of the node');
+    }
+
+    try {
+      return await this.resourceQuery.getPodsByNode(nid);
+    } catch (error) {
+      this.logger.error('ResourceService.getPodsByNode failed');
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
   async getTotalSize() {
-    this.logger.debug('ResourceService.getTotalSize called');
-    const [clusters, namespaces, nodes, pods, containers, sboms, drifts] = await Promise.all([
-      this.clusterRepo.count(),
-      this.namespaceRepo.count(),
-      this.nodeRepo.count(),
-      this.podRepo.count(),
-      this.containerRepo.count(),
-      this.sbomRepo.count(),
-      this.driftRepo.count(),
-    ]);
-
-    return { clusters, namespaces, nodes, pods, containers, sboms, drifts };
+    this.logger.debug?.('ResourceService.getTotalSize called');
+    try {
+      return await this.resourceQuery.getTotalSize();
+    } catch (error) {
+      this.logger.error('ResourceService.getTotalSize failed');
+      this.logger.error(error);
+      throw error;
+    }
   }
 }
