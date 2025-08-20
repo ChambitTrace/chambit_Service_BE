@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './application/auth/auth.module';
 import { DBModule } from './application/DB/DB.module';
 import { ResourceModule } from './application/resource/resource.module';
+import { SbomModule } from './application/sbom/sbom.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ResourceModule } from './application/resource/resource.module';
     DBModule,
     AuthModule,
     ResourceModule,
+    SbomModule
   ],
   controllers: [AppController],
   providers: [AppService],

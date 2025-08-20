@@ -14,11 +14,12 @@ export class SbomQuery {
   ) {}
 
   async createSbom(
-    payload: Pick<Sbom, 'sSource' | 'sFormat' | 'sData' | 'sCoid'>,
+    payload: Pick<Sbom, 'sSource' | 'sFormat' | 'sData' | 'sPid'>,
   ) {
     try {
       const sbom = this.repo.create({
         ...payload,
+        sSource: payload.sSource ?? '',
         sGeneratedAt: getSeoulTimestamp(),
       });
       await this.repo.save(sbom);
@@ -36,7 +37,7 @@ export class SbomQuery {
   findById(sId: string) {
     return this.repo.findOne({ where: { sId } });
   }
-  findByContainer(coId: string) {
-    return this.repo.find({ where: { sCoid: coId } });
+  findByContainer(pId: string) {
+    return this.repo.find({ where: { sPid: pId } });
   }
 }

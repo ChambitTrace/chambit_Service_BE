@@ -5,7 +5,9 @@ import {
   Post,
   UseGuards,
   UsePipes,
+  Res
 } from '@nestjs/common';
+import { Response } from 'express';
 import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CustomValidationPipe } from 'src/core/pipes/validation';
 import { JsonResponse } from 'src/core/utils/json-response';
@@ -113,12 +115,15 @@ export class AuthController {
     description:
       'Google OAuth 로그인 성공 후 리다이렉트 되는 콜백, JWT 토큰 발급',
   })
-  async googleCallback(@OAuthUser() user: OAuthUserInfo) {
-    const result = await this.authService.oauthLogin(user);
+  async googleCallback(@OAuthUser() user: OAuthUserInfo, @Res({ passthrough: false }) res: Response,) {
+    const { accessToken, refreshToken } = await this.authService.oauthLogin(user);
 
-    const response = new JsonResponse();
-    response.set('data', result);
+    const FRONT_URL = process.env.FRONT_URL || 'http://localhost:5173';
+    // 해시에 담아 리다이렉트(브라우저 히스토리에 남지만 서버 로그엔 덜 남음)
+    const redirectUrl = `${FRONT_URL}/oauth/callback#access_token=${encodeURIComponent(
+      accessToken,
+    )}&refresh_token=${encodeURIComponent(refreshToken ?? '')}`;
 
-    return response.of();
+    return res.redirect(redirectUrl);
   }
 }
