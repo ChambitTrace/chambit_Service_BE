@@ -20,6 +20,11 @@ async function bootstrap() {
   );
   app.useGlobalPipes(new CustomValidationPipe());
 
+  app.enableCors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
   // Swagger 설정
   SwaggerConfig.setup(app);
 

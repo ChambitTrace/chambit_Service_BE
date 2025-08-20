@@ -1,4 +1,9 @@
-import { ApiProperty, ApiResponseOptions, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiResponseOptions,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { applyDecorators } from '@nestjs/common';
 
 export class ApiResponseDto<T> {
@@ -26,7 +31,11 @@ export function createSuccessResponse<T>(
     examples: {
       success: {
         summary: '성공',
-        value: { code: 0, message: 'SUCCESS', ...(exampleData && { data: exampleData }), },
+        value: {
+          code: 0,
+          message: 'SUCCESS',
+          ...(exampleData && { data: exampleData }),
+        },
       },
     },
   };
@@ -41,7 +50,7 @@ export function createSwaggerDecorator(
   return applyDecorators(
     ApiOperation({ summary }),
     ApiResponse(successResponse),
-    ...errorResponses.map(response => ApiResponse(response)),
+    ...errorResponses.map((response) => ApiResponse(response)),
   );
 }
 
