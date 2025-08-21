@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonLoggerService } from 'src/core/interceptors/logging/winston-logger.service';
 import { User } from './entity/user';
 import { Cluster } from './entity/resource/cluster';
-import { ClusterOwner } from './entity/resource/clusterowner';
+import { ClusterUser } from './entity/resource/clusteruser';
 import { Namespace } from './entity/resource/namespace';
 import { Node } from './entity/resource/node';
 import { Pod } from './entity/resource/pod';
@@ -24,7 +24,7 @@ import { ResourceQuery } from './query/resource.query';
       Container,
       Sbom,
       Drift,
-      ClusterOwner,
+      ClusterUser,
     ]),
   ],
   providers: [WinstonLoggerService, UserQuery, ResourceQuery],

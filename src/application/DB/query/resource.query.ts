@@ -10,7 +10,7 @@ import { Pod } from '../../DB/entity/resource/pod';
 import { Container } from '../../DB/entity/resource/container';
 import { Sbom } from '../../DB/entity/sbom';
 import { Drift } from '../../DB/entity/drift';
-import { ClusterOwner } from '../entity/resource/clusterowner';
+import { ClusterUser } from '../entity/resource/clusteruser';
 
 @Injectable()
 export class ResourceQuery {
@@ -18,8 +18,8 @@ export class ResourceQuery {
     private readonly logger: WinstonLoggerService,
     @InjectRepository(Cluster)
     private readonly clusterRepo: Repository<Cluster>,
-    @InjectRepository(ClusterOwner)
-    private readonly clusterOwnerRepo: Repository<ClusterOwner>,
+    @InjectRepository(ClusterUser)
+    private readonly clusterUserRepo: Repository<ClusterUser>,
     @InjectRepository(Namespace)
     private readonly namespaceRepo: Repository<Namespace>,
     @InjectRepository(Node) private readonly nodeRepo: Repository<Node>,
@@ -36,26 +36,26 @@ export class ResourceQuery {
       throw new Error('uid is required');
     }
 
-    const clusterOwner = await this.clusterOwnerRepo.findOne({
-      where: { cowUid: uid, cowCid: cid },
-      select: ['cowUid', 'cowCid'],
+    const clusterUser = await this.clusterUserRepo.findOne({
+      where: { cuUid: uid, cuCid: cid },
+      select: ['cuUid', 'cuCid'],
     });
 
-    if (!clusterOwner) {
-      this.logger.warn(`No cluster owner found for uid: ${uid}, cid: ${cid}`);
+    if (!clusterUser) {
+      this.logger.warn(`No cluster user found for uid: ${uid}, cid: ${cid}`);
       return false;
     }
 
     return true;
   }
-  async getClusters(cowUid: string) {
+  async getClusters(cuUid: string) {
     this.logger.debug('ResourceQuery.getClusters called');
-    const ownedClusters = await this.clusterOwnerRepo.find({
-      where: { cowUid },
-      select: ['cowCid'],
+    const ownedClusters = await this.clusterUserRepo.find({
+      where: { cuUid },
+      select: ['cuCid'],
     });
 
-    const clusterIds = ownedClusters.map((oc) => oc.cowCid);
+    const clusterIds = ownedClusters.map((oc) => oc.cuCid);
 
     return await this.clusterRepo.findByIds(clusterIds);
   }
