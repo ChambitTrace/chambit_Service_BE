@@ -55,5 +55,11 @@ export class LoginRequestDto {
   })
   @IsNotEmpty({ message: '비밀번호는 필수 입력 항목입니다.' })
   @IsString({ message: '비밀번호는 문자열이어야 합니다.' })
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/,
+    {
+      message: '비밀번호는 영문 대소문자, 숫자, 특수문자를 포함해야 합니다.',
+    },
+  )
   password: string;
 }
