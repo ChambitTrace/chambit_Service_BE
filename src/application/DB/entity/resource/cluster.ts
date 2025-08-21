@@ -11,9 +11,6 @@ export class Cluster {
   })
   cId: string;
 
-  @Column({ name: 'c_uid', type: 'varchar' })
-  cUid: string;
-
   @Column({ name: 'c_name', type: 'varchar' })
   cName: string;
 

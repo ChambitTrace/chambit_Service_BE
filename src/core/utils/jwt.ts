@@ -163,8 +163,9 @@ export class JwtUtil {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const authorization = request.headers.authorization;
     const cookie = request.headers.cookie;
+    const headerRt = request.headers.refreshtoken;
 
-    if (!authorization || !cookie) {
+    if (!authorization || (!cookie && !headerRt)) {
       throw new GlobalException(
         '헤더 또는 쿠키가 필요합니다.',
         401,
@@ -182,12 +183,23 @@ export class JwtUtil {
       );
     }
 
-    const refreshToken = cookie
-      .split('; ')
-      .find((cookie: string) => cookie.startsWith('refreshToken='));
-    const [rType, rValue] = refreshToken.split('=');
+    let refreshTokenValue: string | undefined;
 
-    if (!refreshToken || rType !== 'refreshToken') {
+    if (cookie) {
+      const refreshCookie = cookie
+        .split('; ')
+        .find((c: string) => c.startsWith('refreshToken='));
+      if (refreshCookie) {
+        const [, rValue] = refreshCookie.split('=');
+        refreshTokenValue = rValue;
+      }
+    }
+
+    if (!refreshTokenValue && headerRt) {
+      refreshTokenValue = headerRt;
+    }
+
+    if (!refreshTokenValue) {
       throw new GlobalException(
         '유효하지 않은 토큰입니다.',
         401,
@@ -195,6 +207,6 @@ export class JwtUtil {
       );
     }
 
-    return { accessToken: aValue, refreshToken: rValue };
+    return { accessToken: aValue, refreshToken: refreshTokenValue };
   }
 }

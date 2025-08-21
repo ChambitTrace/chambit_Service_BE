@@ -34,7 +34,6 @@ export class ResourceController {
   async listClusters(@User() user: UserInfo) {
     //id 기준으로 조회할 수 있게 서비스 수정 필요
     const result = await this.resourceService.getClusters(user.uId);
-
     const response = new JsonResponse();
     response.set('data', result);
 
