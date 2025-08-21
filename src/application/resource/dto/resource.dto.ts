@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class getNodesByClusterRequestDto {
@@ -8,6 +8,12 @@ export class getNodesByClusterRequestDto {
   })
   @IsNotEmpty({ message: 'Cluster ID는 필수 입력 항목입니다.' })
   @IsString({ message: 'Cluster ID는 문자열이어야 합니다.' })
+  @Matches(
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+    {
+      message: 'Cluster ID는 올바른 UUID 형식이어야 합니다.',
+    },
+  )
   cid: string;
 }
 
@@ -18,6 +24,12 @@ export class getNamespacesByClusterRequestDto {
   })
   @IsNotEmpty({ message: 'Cluster ID는 필수 입력 항목입니다.' })
   @IsString({ message: 'Cluster ID는 문자열이어야 합니다.' })
+  @Matches(
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+    {
+      message: 'Cluster ID는 올바른 UUID 형식이어야 합니다.',
+    },
+  )
   cid: string;
 }
 

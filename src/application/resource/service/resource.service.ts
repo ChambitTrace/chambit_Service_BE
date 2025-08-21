@@ -9,31 +9,8 @@ export class ResourceService {
     private readonly logger: WinstonLoggerService,
   ) {}
 
-  async checkClusterOwner(uid: string, cid: string) {
-    this.logger.debug?.('ResourceService.checkClusterOwner called');
-
-    if (!uid) {
-      this.logger.error('ResourceService.checkClusterOwner: uid is required');
-      throw new Error('uid is required');
-    }
-
-    try {
-      return await this.resourceQuery.checkClusterOwner(uid, cid);
-    } catch (error) {
-      this.logger.error('ResourceService.checkClusterOwner failed');
-      this.logger.error(error);
-      throw error;
-    }
-  }
-
   async getClusters(uid: string) {
-    this.logger.debug?.('ResourceService.getClusters called');
-
-    if (!uid) {
-      this.logger.error('ResourceService.getClusters: uid is required');
-      throw new Error('uid is required');
-    }
-
+    this.logger.debug('ResourceService.getClusters called');
     try {
       return await this.resourceQuery.getClusters(uid);
     } catch (error) {
@@ -44,23 +21,19 @@ export class ResourceService {
   }
 
   async getNodesByCluster(cid: string, uid: string) {
-    this.logger.debug?.('ResourceService.getNodesByCluster called');
-    if (!cid) {
-      this.logger.error('ResourceService.getNodesByCluster: cid is required');
-      throw new Error('cid is required');
-    }
-    if (!uid) {
-      this.logger.error('ResourceService.getNodesByCluster: uid is required');
-      throw new Error('uid is required');
-    }
-    if (!(await this.checkClusterOwner(uid, cid))) {
-      this.logger.error(
-        'ResourceService.getNodesByCluster: User is not the owner of the cluster',
-      );
-      throw new Error('User is not the owner of the cluster');
-    }
-
+    this.logger.debug('ResourceService.getNodesByCluster called');
     try {
+      const checkClusterUser = await this.resourceQuery.checkClusterUser(
+        uid,
+        cid,
+      );
+      if (!checkClusterUser) {
+        this.logger.error(
+          'ResourceService.getNodesByCluster: User is not the owner of the cluster',
+        );
+        throw new Error('User is not the owner of the cluster');
+      }
+
       return await this.resourceQuery.getNodesByCluster(cid);
     } catch (error) {
       this.logger.error('ResourceService.getNodesByCluster failed');
@@ -70,24 +43,19 @@ export class ResourceService {
   }
 
   async getNamespacesByCluster(cid: string, uid: string) {
-    this.logger.debug?.('ResourceService.getNamespacesByCluster called');
-    if (!cid) {
-      this.logger.error('ResourceService.getNodesByCluster: cid is required');
-      throw new Error('cid is required');
-    }
-    if (!uid) {
-      this.logger.error('ResourceService.getNodesByCluster: uid is required');
-      throw new Error('uid is required');
-    }
-
-    if (!(await this.checkClusterOwner(uid, cid))) {
-      this.logger.error(
-        'ResourceService.getNodesByCluster: User is not the owner of the cluster',
-      );
-      throw new Error('User is not the owner of the cluster');
-    }
-
+    this.logger.debug('ResourceService.getNamespacesByCluster called');
     try {
+      const checkClusterUser = await this.resourceQuery.checkClusterUser(
+        uid,
+        cid,
+      );
+      if (!checkClusterUser) {
+        this.logger.error(
+          'ResourceService.getNodesByCluster: User is not the owner of the cluster',
+        );
+        throw new Error('User is not the owner of the cluster');
+      }
+
       return await this.resourceQuery.getNamespacesByCluster(cid);
     } catch (error) {
       this.logger.error('ResourceService.getNamespacesByCluster failed');
@@ -97,24 +65,16 @@ export class ResourceService {
   }
 
   async getPodsByNode(nid: string, uid: string) {
-    this.logger.debug?.('ResourceService.getPodsByNode called');
-
-    if (!nid) {
-      this.logger.error('ResourceService.getPodsByNode: nid is required');
-      throw new Error('nid is required');
-    }
-    if (!uid) {
-      this.logger.error('ResourceService.getPodsByNode: uid is required');
-      throw new Error('uid is required');
-    }
-    if (!(await this.resourceQuery.checkNodeOwner(uid, nid))) {
-      this.logger.error(
-        'ResourceService.getPodsByNode: User is not the owner of the node',
-      );
-      throw new Error('User is not the owner of the node');
-    }
-
+    this.logger.debug('ResourceService.getPodsByNode called');
     try {
+      const checkNodeUser = await this.resourceQuery.checkNodeUser(uid, nid);
+      if (!checkNodeUser) {
+        this.logger.error(
+          'ResourceService.getPodsByNode: User is not the owner of the node',
+        );
+        throw new Error('User is not the owner of the node');
+      }
+
       return await this.resourceQuery.getPodsByNode(nid);
     } catch (error) {
       this.logger.error('ResourceService.getPodsByNode failed');
@@ -124,7 +84,7 @@ export class ResourceService {
   }
 
   async getTotalSize() {
-    this.logger.debug?.('ResourceService.getTotalSize called');
+    this.logger.debug('ResourceService.getTotalSize called');
     try {
       return await this.resourceQuery.getTotalSize();
     } catch (error) {

@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { WinstonLoggerService } from 'src/core/interceptors/logging/winston-logger.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import { WinstonLoggerService } from '../../../core/interceptors/logging/winston-logger.service';
 
-import { Cluster } from '../../DB/entity/resource/cluster';
-import { Namespace } from '../../DB/entity/resource/namespace';
-import { Node } from '../../DB/entity/resource/node';
-import { Pod } from '../../DB/entity/resource/pod';
-import { Container } from '../../DB/entity/resource/container';
-import { Sbom } from '../../DB/entity/sbom';
-import { Drift } from '../../DB/entity/drift';
 import { ClusterUser } from '../entity/resource/clusteruser';
+import { Cluster } from '../entity/resource/cluster';
+import { Namespace } from '../entity/resource/namespace';
+import { Node } from '../entity/resource/node';
+import { Pod } from '../entity/resource/pod';
+import { Container } from '../entity/resource/container';
 
 @Injectable()
 export class ResourceQuery {
@@ -22,20 +20,16 @@ export class ResourceQuery {
     private readonly clusterUserRepo: Repository<ClusterUser>,
     @InjectRepository(Namespace)
     private readonly namespaceRepo: Repository<Namespace>,
-    @InjectRepository(Node) private readonly nodeRepo: Repository<Node>,
-    @InjectRepository(Pod) private readonly podRepo: Repository<Pod>,
+    @InjectRepository(Node)
+    private readonly nodeRepo: Repository<Node>,
+    @InjectRepository(Pod)
+    private readonly podRepo: Repository<Pod>,
     @InjectRepository(Container)
     private readonly containerRepo: Repository<Container>,
-    @InjectRepository(Sbom) private readonly sbomRepo: Repository<Sbom>,
-    @InjectRepository(Drift) private readonly driftRepo: Repository<Drift>,
   ) {}
-  async checkClusterOwner(uid: string, cid: string) {
-    this.logger.debug('ResourceQuery.checkClusterOwner called');
-    if (!uid) {
-      this.logger.error('ResourceQuery.checkClusterOwner: uid is required');
-      throw new Error('uid is required');
-    }
 
+  async checkClusterUser(uid: string, cid: string) {
+    this.logger.debug('ResourceQuery.checkClusterUser called');
     const clusterUser = await this.clusterUserRepo.findOne({
       where: { cuUid: uid, cuCid: cid },
       select: ['cuUid', 'cuCid'],
@@ -45,9 +39,9 @@ export class ResourceQuery {
       this.logger.warn(`No cluster user found for uid: ${uid}, cid: ${cid}`);
       return false;
     }
-
     return true;
   }
+
   async getClusters(cuUid: string) {
     this.logger.debug('ResourceQuery.getClusters called');
     const ownedClusters = await this.clusterUserRepo.find({
@@ -56,8 +50,13 @@ export class ResourceQuery {
     });
 
     const clusterIds = ownedClusters.map((oc) => oc.cuCid);
+    if (clusterIds.length === 0) {
+      return [];
+    }
 
-    return await this.clusterRepo.findByIds(clusterIds);
+    return await this.clusterRepo.find({
+      where: { cId: In(clusterIds) },
+    });
   }
 
   async getNodesByCluster(nCid: string) {
@@ -74,22 +73,17 @@ export class ResourceQuery {
     return await this.namespaceRepo.find({ where: { nsCid } });
   }
 
-  async checkNodeOwner(uid: string, nId: string) {
-    this.logger.debug('ResourceQuery.checkNodeOwner called');
-    if (!uid) {
-      this.logger.error('ResourceQuery.checkNodeOwner: uid is required');
-      throw new Error('uid is required');
-    }
+  async checkNodeUser(uid: string, nId: string) {
+    this.logger.debug('ResourceQuery.checkNodeUser called');
 
-    const cluster = await this.nodeRepo.findOne({ where: { nId } });
-    if (!cluster) {
+    const node = await this.nodeRepo.findOne({ where: { nId } });
+    if (!node) {
       this.logger.warn(`No node found with nId: ${nId}`);
       return false;
     }
 
-    const checkOwner = await this.checkClusterOwner(uid, cluster.nCid);
-
-    if (!checkOwner) {
+    const checkNodeUser = await this.checkClusterUser(uid, node.nCid);
+    if (!checkNodeUser) {
       this.logger.warn(`Not an owner of the cluster for node nId: ${nId}`);
       return false;
     }
@@ -106,8 +100,9 @@ export class ResourceQuery {
   async getTotalSize() {
     this.logger.debug('ResourceQuery.getTotalSize called');
     const containerCount = await this.containerRepo.count();
-    const sbomCount = await this.sbomRepo.count();
-    const driftCount = await this.driftRepo.count();
-    return { containerCount, sbomCount, driftCount };
+    // const sbomCount = await this.sbomRepo.count();
+    // const driftCount = await this.driftRepo.count();
+    // return { containerCount, sbomCount, driftCount };
+    return { containerCount };
   }
 }
